@@ -17,7 +17,7 @@
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.21">
     
     
       
@@ -477,7 +477,7 @@
 <p>Creates a <code>LocalPreferences.toml</code> file with the desired GPU backend.</p>
 <p>If <code>backend == ""</code>, then the <code>gpu_backend</code> preference is deleted. Otherwise, <code>backend</code> is validated to be one of the possible backends and the preference is set to <code>backend</code>.</p>
 <p>If a new backend is successfully set, then the Julia session must be restarted for the change to take effect.</p>
-<p><a target='_blank' href='https://github.com/LuxDL/LuxDeviceUtils.jl/blob/db95b0a949a839f0b0e06d1981533f56e2e09b4a/src/LuxDeviceUtils.jl#L159-L172' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/LuxDL/LuxDeviceUtils.jl/blob/07dc08a148cf9ed8bb73524b62879f5b2a2dd682/src/LuxDeviceUtils.jl#L163-L176' class='documenter-source'>source</a><br></p>
 <p><a id='Data-Transfer'></a></p>
 <p><a id='Data-Transfer-1'></a></p>
 <h3 id="data-transfer">Data Transfer<a class="headerlink" href="#data-transfer" title="Permanent link">¤</a></h3>
@@ -486,7 +486,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">cpu_device</span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">LuxCPUDevice</span><span class="p">()</span>
 </code></pre></div>
 <p>Return a <code>LuxCPUDevice</code> object which can be used to transfer data to CPU.</p>
-<p><a target='_blank' href='https://github.com/LuxDL/LuxDeviceUtils.jl/blob/db95b0a949a839f0b0e06d1981533f56e2e09b4a/src/LuxDeviceUtils.jl#L198-L202' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/LuxDL/LuxDeviceUtils.jl/blob/07dc08a148cf9ed8bb73524b62879f5b2a2dd682/src/LuxDeviceUtils.jl#L202-L206' class='documenter-source'>source</a><br></p>
 <p><a id='LuxDeviceUtils.gpu_device' href='#LuxDeviceUtils.gpu_device'>#</a>
 <strong><code>LuxDeviceUtils.gpu_device</code></strong> &mdash; <em>Function</em>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">gpu_device</span><span class="p">(;</span><span class="w"> </span><span class="n">force_gpu_usage</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">AbstractLuxDevice</span><span class="p">()</span>
@@ -498,7 +498,7 @@
 <li>If no GPU device is functional and  <code>force_gpu_usage</code> is <code>false</code>, then <code>cpu_device()</code> is invoked.</li>
 <li>If nothing works, an error is thrown.</li>
 </ol>
-<p><a target='_blank' href='https://github.com/LuxDL/LuxDeviceUtils.jl/blob/db95b0a949a839f0b0e06d1981533f56e2e09b4a/src/LuxDeviceUtils.jl#L74-L87' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/LuxDL/LuxDeviceUtils.jl/blob/07dc08a148cf9ed8bb73524b62879f5b2a2dd682/src/LuxDeviceUtils.jl#L79-L92' class='documenter-source'>source</a><br></p>
 <p><a id='Miscellaneous'></a></p>
 <p><a id='Miscellaneous-1'></a></p>
 <h3 id="miscellaneous">Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permanent link">¤</a></h3>
@@ -507,7 +507,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">reset_gpu_device!</span><span class="p">()</span>
 </code></pre></div>
 <p>Resets the selected GPU device. This is useful when automatic GPU selection needs to be run again.</p>
-<p><a target='_blank' href='https://github.com/LuxDL/LuxDeviceUtils.jl/blob/db95b0a949a839f0b0e06d1981533f56e2e09b4a/src/LuxDeviceUtils.jl#L52-L57' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/LuxDL/LuxDeviceUtils.jl/blob/07dc08a148cf9ed8bb73524b62879f5b2a2dd682/src/LuxDeviceUtils.jl#L52-L57' class='documenter-source'>source</a><br></p>
 <p><a id='LuxDeviceUtils.supported_gpu_backends' href='#LuxDeviceUtils.supported_gpu_backends'>#</a>
 <strong><code>LuxDeviceUtils.supported_gpu_backends</code></strong> &mdash; <em>Function</em>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">supported_gpu_backends</span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kt">Tuple</span><span class="p">{</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="o">...</span><span class="p">}</span>
@@ -517,7 +517,11 @@
 <p class="admonition-title">Warning</p>
 <p>This is not the list of functional backends on the system, but rather backends which <code>Lux.jl</code> supports.</p>
 </div>
-<p><a target='_blank' href='https://github.com/LuxDL/LuxDeviceUtils.jl/blob/db95b0a949a839f0b0e06d1981533f56e2e09b4a/src/LuxDeviceUtils.jl#L62-L71' class='documenter-source'>source</a><br></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code>Metal.jl</code> support is <strong>extremely</strong> experimental and most things are not expected to work.</p>
+</div>
+<p><a target='_blank' href='https://github.com/LuxDL/LuxDeviceUtils.jl/blob/07dc08a148cf9ed8bb73524b62879f5b2a2dd682/src/LuxDeviceUtils.jl#L62-L76' class='documenter-source'>source</a><br></p>
 
 
 
