@@ -41,7 +41,7 @@ using FillArrays, Zygote  # Extensions
 
     device = gpu_device()
     aType = LuxDeviceUtils.functional(LuxAMDGPUDevice) ? ROCArray : Array
-    rngType = LuxDeviceUtils.functional(LuxAMDGPUDevice) ? AMDGPU.rocRAND.RNG :
+    rngType = LuxDeviceUtils.functional(LuxAMDGPUDevice) ? AMDGPU.GPUArrays.RNG :
               Random.AbstractRNG
 
     ps_xpu = ps |> device
