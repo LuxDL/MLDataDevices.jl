@@ -1,4 +1,4 @@
-module LuxDeviceUtilsAMDGPUExt
+module DeviceUtilsAMDGPUExt
 
 using Adapt: Adapt
 using AMDGPU: AMDGPU
@@ -7,7 +7,6 @@ using Random: Random
 
 __init__() = reset_gpu_device!()
 
-# This code used to be in `LuxAMDGPU.jl`, but we no longer need that package.
 const USE_AMD_GPU = Ref{Union{Nothing, Bool}}(nothing)
 
 function _check_use_amdgpu!()
@@ -46,13 +45,11 @@ DeviceUtils._get_device_id(dev::AMDGPUDevice) = AMDGPU.device_id(dev.device)
 DeviceUtils.default_device_rng(::AMDGPUDevice) = AMDGPU.rocrand_rng()
 
 # Query Device from Array
-function DeviceUtils._get_device(x::AMDGPU.AnyROCArray)
+function DeviceUtils.get_device(x::AMDGPU.AnyROCArray)
     parent_x = parent(x)
     parent_x === x && return AMDGPUDevice(AMDGPU.device(x))
-    return DeviceUtils._get_device(parent_x)
+    return DeviceUtils.get_device(parent_x)
 end
-
-DeviceUtils._get_device_type(::AMDGPU.AnyROCArray) = AMDGPUDevice
 
 # Set Device
 function DeviceUtils.set_device!(::Type{AMDGPUDevice}, dev::AMDGPU.HIPDevice)

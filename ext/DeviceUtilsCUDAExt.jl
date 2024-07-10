@@ -1,9 +1,9 @@
-module LuxDeviceUtilsCUDAExt
+module DeviceUtilsCUDAExt
 
 using Adapt: Adapt
 using CUDA: CUDA
 using CUDA.CUSPARSE: AbstractCuSparseMatrix, AbstractCuSparseVector
-using DeviceUtils: DeviceUtils, CUDADevice, CPUDevice
+using DeviceUtils: DeviceUtils, CUDADevice, CPUDevice, reset_gpu_device!
 using Random: Random
 
 function DeviceUtils._with_device(::Type{CUDADevice}, id::Integer)
@@ -26,18 +26,13 @@ DeviceUtils._get_device_id(dev::CUDADevice) = CUDA.deviceid(dev.device) + 1
 DeviceUtils.default_device_rng(::CUDADevice) = CUDA.default_rng()
 
 # Query Device from Array
-function DeviceUtils._get_device(x::CUDA.AnyCuArray)
+function DeviceUtils.get_device(x::CUDA.AnyCuArray)
     parent_x = parent(x)
     parent_x === x && return CUDADevice(CUDA.device(x))
     return DeviceUtils.get_device(parent_x)
 end
-function DeviceUtils._get_device(x::CUDA.CUSPARSE.AbstractCuSparseArray)
+function DeviceUtils.get_device(x::CUDA.CUSPARSE.AbstractCuSparseArray)
     return CUDADevice(CUDA.device(x.nzVal))
-end
-
-function DeviceUtils._get_device_type(::Union{
-        <:CUDA.AnyCuArray, <:CUDA.CUSPARSE.AbstractCuSparseArray})
-    return CUDADevice
 end
 
 # Set Device

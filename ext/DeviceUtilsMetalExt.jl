@@ -1,4 +1,4 @@
-module LuxDeviceUtilsMetalExt
+module DeviceUtilsMetalExt
 
 using Adapt: Adapt
 using GPUArrays: GPUArrays
@@ -16,9 +16,7 @@ end
 DeviceUtils.default_device_rng(::MetalDevice) = GPUArrays.default_rng(MtlArray)
 
 # Query Device from Array
-DeviceUtils._get_device(::MtlArray) = MetalDevice()
-
-DeviceUtils._get_device_type(::MtlArray) = MetalDevice
+DeviceUtils.get_device(::MtlArray) = MetalDevice()
 
 # Device Transfer
 ## To GPU

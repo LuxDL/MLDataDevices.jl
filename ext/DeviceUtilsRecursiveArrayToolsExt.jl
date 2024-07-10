@@ -1,4 +1,4 @@
-module LuxDeviceUtilsRecursiveArrayToolsExt
+module DeviceUtilsRecursiveArrayToolsExt
 
 using Adapt: Adapt, adapt
 using DeviceUtils: DeviceUtils, AbstractDevice
@@ -14,11 +14,8 @@ function Adapt.adapt_structure(to::AbstractDevice, x::DiffEqArray)
     return DiffEqArray(map(Base.Fix1(adapt, to), x.u), x.t)
 end
 
-for op in (:_get_device, :_get_device_type)
-    @eval function DeviceUtils.$op(x::Union{VectorOfArray, DiffEqArray})
-        length(x.u) == 0 && return $(op == :_get_device ? nothing : Nothing)
-        return mapreduce(DeviceUtils.$op, DeviceUtils.__combine_devices, x.u)
-    end
+function DeviceUtils.get_device(x::Union{VectorOfArray, DiffEqArray})
+    return mapreduce(DeviceUtils.get_device, DeviceUtils.__combine_devices, x.u)
 end
 
 end
