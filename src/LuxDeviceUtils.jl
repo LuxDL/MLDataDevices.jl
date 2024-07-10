@@ -30,8 +30,6 @@ Note that while this function is not exported, it is considered part of the publ
 """
 @inline functional(x) = false
 
-Base.@deprecate __is_functional(x) functional(x)
-
 """
     loaded(x::AbstractLuxDevice) -> Bool
     loaded(::Type{<:AbstractLuxDevice}) -> Bool
@@ -44,8 +42,6 @@ Checks if the trigger package for the device is loaded. Trigger packages are as 
   - `oneAPI.jl` for Intel oneAPI GPU Support.
 """
 @inline loaded(x) = false
-
-Base.@deprecate __is_loaded(x) loaded(x)
 
 struct LuxCPUDevice <: AbstractLuxDevice end
 @kwdef struct LuxCUDADevice{D} <: AbstractLuxGPUDevice
@@ -440,14 +436,6 @@ function set_device!(::Type{T}, ::Nothing, rank::Integer) where {T <: AbstractLu
 end
 
 # Adapt Interface
-# In older versions we had corresponding Adapt functions, rn we directly dispatch on the
-# device type.
-for name in (:CPU, :CUDA, :AMDGPU, :Metal, :oneAPI)
-    dev = Symbol(:Lux, name, :Device)
-    adaptor = Symbol(:Lux, name, :Adaptor)
-    @eval Base.@deprecate $(adaptor) $(dev) true
-end
-
 Adapt.adapt_storage(::LuxCPUDevice, x::AbstractArray) = Adapt.adapt(Array, x)
 Adapt.adapt_storage(::LuxCPUDevice, rng::AbstractRNG) = rng
 
