@@ -16,7 +16,9 @@ end
 DeviceUtils.default_device_rng(::MetalDevice) = GPUArrays.default_rng(MtlArray)
 
 # Query Device from Array
-DeviceUtils.get_device(::MtlArray) = MetalDevice()
+DeviceUtils._get_device(::MtlArray) = MetalDevice()
+
+DeviceUtils._get_device_type(::MtlArray) = MetalDevice
 
 # Device Transfer
 ## To GPU
