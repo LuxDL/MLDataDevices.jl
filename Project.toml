@@ -40,7 +40,7 @@ MLDataDevicescuDNNExt = ["CUDA", "cuDNN"]
 MLDataDevicesoneAPIExt = ["GPUArrays", "oneAPI"]
 
 [compat]
-AMDGPU = "0.9.6"
+AMDGPU = "0.9.6, 1"
 Adapt = "4"
 Aqua = "0.8.4"
 ArrayInterface = "7.11"
