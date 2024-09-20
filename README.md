@@ -21,6 +21,7 @@ Currently we provide support for the following backends:
 2. `AMDGPU.jl` for AMD ROCM GPUs.
 3. `Metal.jl` for Apple Metal GPUs. **(Experimental)**
 4. `oneAPI.jl` for Intel GPUs. **(Experimental)**
+5. `OpenCL.jl` for openCL devices. **(Extremely Experimental)**
 
 ## Updating to v1.0
 

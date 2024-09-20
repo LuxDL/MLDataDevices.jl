@@ -6,6 +6,7 @@ using Preferences: @delete_preferences!, @load_preference, @set_preferences!
 using Random: AbstractRNG, Random
 
 abstract type AbstractDevice <: Function end
+abstract type AbstractCPUDevice <: AbstractDevice end
 abstract type AbstractGPUDevice <: AbstractDevice end
 
 include("public.jl")
@@ -16,7 +17,8 @@ export gpu_backend!, supported_gpu_backends, reset_gpu_device!
 export default_device_rng
 export gpu_device, cpu_device
 
-export CPUDevice, CUDADevice, AMDGPUDevice, MetalDevice, oneAPIDevice
+export CPUDevice
+export CUDADevice, AMDGPUDevice, MetalDevice, oneAPIDevice, OpenCLDevice
 export get_device, get_device_type
 
 export DeviceIterator

@@ -5,10 +5,10 @@ using Preferences: load_preference
 using Random: AbstractRNG
 
 using ..MLDataDevices: MLDataDevices, AbstractDevice, CPUDevice, CUDADevice, AMDGPUDevice,
-                       MetalDevice, oneAPIDevice, supported_gpu_backends, GPU_DEVICES,
-                       loaded, functional
+                       MetalDevice, oneAPIDevice, OpenCLDevice, supported_gpu_backends,
+                       GPU_DEVICES, loaded, functional
 
-for dev in (CPUDevice, MetalDevice, oneAPIDevice)
+for dev in (CPUDevice, MetalDevice, oneAPIDevice, OpenCLDevice)
     msg = "`device_id` is not applicable for `$dev`."
     @eval begin
         with_device(::Type{$dev}, ::Nothing) = $dev()
@@ -19,7 +19,7 @@ for dev in (CPUDevice, MetalDevice, oneAPIDevice)
     end
 end
 
-for name in (:CPU, :CUDA, :AMDGPU, :Metal, :oneAPI)
+for name in (:CPU, :CUDA, :AMDGPU, :Metal, :oneAPI, :OpenCL)
     tpkg = name === :CPU ? "" : string(name)
     ldev = Symbol(name, :Device)
     @eval begin
@@ -28,7 +28,8 @@ for name in (:CPU, :CUDA, :AMDGPU, :Metal, :oneAPI)
     end
 end
 
-for T in (CPUDevice, CUDADevice{Nothing}, AMDGPUDevice{Nothing}, MetalDevice, oneAPIDevice)
+for T in (CPUDevice, CUDADevice{Nothing}, AMDGPUDevice{Nothing},
+    MetalDevice, oneAPIDevice, OpenCLDevice)
     @eval get_device_id(::$(T)) = nothing
 end
 
@@ -93,7 +94,8 @@ function get_gpu_device(; force_gpu_usage::Bool)
                  a. `CUDA.jl` and `cuDNN.jl` (or just `LuxCUDA.jl`) for  NVIDIA CUDA Support.
                  b. `AMDGPU.jl` for AMD GPU ROCM Support.
                  c. `Metal.jl` for Apple Metal GPU Support. (Experimental)
-                 d. `oneAPI.jl` for Intel oneAPI GPU Support. (Experimental)""" maxlog=1
+                 d. `oneAPI.jl` for Intel oneAPI GPU Support. (Experimental)
+                 e. `OpenCL.jl` for OpenCL Support. (Extremely Experimental)""" maxlog=1
     return CPUDevice
 end
 
