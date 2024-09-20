@@ -1,4 +1,4 @@
-struct CPUDevice <: AbstractDevice end
+struct CPUDevice <: AbstractCPUDevice end
 @kwdef struct CUDADevice{D} <: AbstractGPUDevice
     device::D = nothing
 end
@@ -7,6 +7,7 @@ end
 end
 struct MetalDevice <: AbstractGPUDevice end
 struct oneAPIDevice <: AbstractGPUDevice end
+struct OpenCLDevice <: AbstractGPUDevice end
 
 """
     functional(x::AbstractDevice) -> Bool
@@ -36,7 +37,7 @@ loaded(x) = false
 loaded(::Union{CPUDevice, Type{<:CPUDevice}}) = true
 
 # Order is important here
-const GPU_DEVICES = (CUDADevice, AMDGPUDevice, MetalDevice, oneAPIDevice)
+const GPU_DEVICES = (CUDADevice, AMDGPUDevice, MetalDevice, oneAPIDevice, OpenCLDevice)
 
 const GPU_DEVICE = Ref{Union{Nothing, AbstractDevice}}(nothing)
 
@@ -292,7 +293,7 @@ end
 # Abstract Array / Tuples / NamedTuples have special fast paths to facilitate type stability
 # For all other types we rely on fmap which means we lose type stability.
 # For Lux, typically models only has these 3 datastructures so we should be mostly fine.
-for (dev) in (:CPU, :CUDA, :AMDGPU, :Metal, :oneAPI)
+for (dev) in (:CPU, :CUDA, :AMDGPU, :Metal, :oneAPI, :OpenCL)
     ldev = Symbol(dev, :Device)
     @eval begin
         function (D::$(ldev))(x::AbstractArray{T}) where {T}
@@ -318,7 +319,7 @@ end
 Adapt.adapt_storage(::CPUDevice, x::AbstractArray) = Adapt.adapt(Array, x)
 Adapt.adapt_storage(::CPUDevice, rng::AbstractRNG) = rng
 
-for T in (AMDGPUDevice, CUDADevice, MetalDevice, oneAPIDevice)
+for T in (AMDGPUDevice, CUDADevice, MetalDevice, oneAPIDevice, OpenCLDevice)
     @eval begin
         function Adapt.adapt_storage(to::$(T), ::Random.TaskLocalRNG)
             return default_device_rng(to)
@@ -330,6 +331,6 @@ end
 Adapt.adapt_storage(::CPUDevice, x::AbstractRange) = x
 # Prevent Ambiguity
 for T in (AMDGPUDevice, AMDGPUDevice{Nothing}, CUDADevice,
-    CUDADevice{Nothing}, MetalDevice, oneAPIDevice)
+    CUDADevice{Nothing}, MetalDevice, oneAPIDevice, OpenCLDevice)
     @eval Adapt.adapt_storage(to::$(T), x::AbstractRange) = Adapt.adapt(to, collect(x))
 end
