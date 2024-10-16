@@ -25,4 +25,7 @@ export get_device, get_device_type
 
 export DeviceIterator
 
+### uncomment below when min supported julia version is >=1.11
+# public isleaf 
+
 end

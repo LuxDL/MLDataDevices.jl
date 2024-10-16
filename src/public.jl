@@ -347,7 +347,7 @@ for (dev) in (:CPU, :CUDA, :AMDGPU, :Metal, :oneAPI, :XLA)
         end
         (D::$(ldev))(x::Union{Tuple, NamedTuple}) = map(D, x)
         function (D::$(ldev))(x)
-            Functors.isleaf(x) && return Adapt.adapt(D, x)
+            isleaf(x) && return Adapt.adapt(D, x)
             return Functors.fmap(D, x)
         end
     end
@@ -380,3 +380,6 @@ for T in (AMDGPUDevice, AMDGPUDevice{Nothing}, CUDADevice,
     CUDADevice{Nothing}, MetalDevice, oneAPIDevice)
     @eval Adapt.adapt_storage(to::$(T), x::AbstractRange) = Adapt.adapt(to, collect(x))
 end
+
+
+isleaf(x) = Functors.isleaf(x)
