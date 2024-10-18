@@ -115,6 +115,27 @@ using FillArrays, Zygote  # Extensions
     end
 end
 
+@testset "Functions" begin
+    if MLDataDevices.functional(MetalDevice)
+        @test get_device(tanh) isa MLDataDevices.UnknownDevice
+        @test get_device_type(tanh) <: MLDataDevices.UnknownDevice
+
+        f(x, y) = () -> (x, x .^ 2, y)
+
+        ff = f([1, 2, 3], 1)
+        @test get_device(ff) isa CPUDevice
+        @test get_device_type(ff) <: CPUDevice
+
+        ff_xpu = ff |> MetalDevice()
+        @test get_device(ff_xpu) isa MetalDevice
+        @test get_device_type(ff_xpu) <: MetalDevice
+
+        ff_cpu = ff_xpu |> cpu_device()
+        @test get_device(ff_cpu) isa CPUDevice
+        @test get_device_type(ff_cpu) <: CPUDevice
+    end
+end
+
 @testset "Wrapper Arrays" begin
     if MLDataDevices.functional(MetalDevice)
         x = rand(Float32, 10, 10) |> MetalDevice()
