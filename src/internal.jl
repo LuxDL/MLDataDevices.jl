@@ -5,8 +5,8 @@ using Preferences: load_preference
 using Random: AbstractRNG
 
 using ..MLDataDevices: MLDataDevices, AbstractDevice, CPUDevice, CUDADevice, AMDGPUDevice,
-                       MetalDevice, oneAPIDevice, XLADevice, supported_gpu_backends,
-                       GPU_DEVICES, loaded, functional
+                       MetalDevice, oneAPIDevice, XLADevice, UnknownDevice,
+                       supported_gpu_backends, GPU_DEVICES, loaded, functional
 
 for dev in (CPUDevice, MetalDevice, oneAPIDevice)
     msg = "`device_id` is not applicable for `$dev`."
@@ -107,16 +107,22 @@ special_aos(::AbstractArray) = false
 recursive_array_eltype(::Type{T}) where {T} = !isbitstype(T) && !(T <: Number)
 
 combine_devices(::Nothing, ::Nothing) = nothing
-combine_devices(::Type{Nothing}, ::Type{Nothing}) = Nothing
 combine_devices(::Nothing, dev::AbstractDevice) = dev
-combine_devices(::Type{Nothing}, ::Type{T}) where {T <: AbstractDevice} = T
 combine_devices(dev::AbstractDevice, ::Nothing) = dev
-combine_devices(::Type{T}, ::Type{Nothing}) where {T <: AbstractDevice} = T
 function combine_devices(dev1::AbstractDevice, dev2::AbstractDevice)
     dev1 == dev2 && return dev1
+    dev1 isa UnknownDevice && return dev2
+    dev2 isa UnknownDevice && return dev1
     throw(ArgumentError("Objects are on different devices: $(dev1) and $(dev2)."))
 end
+
+combine_devices(::Type{Nothing}, ::Type{Nothing}) = Nothing
 combine_devices(::Type{T}, ::Type{T}) where {T <: AbstractDevice} = T
+combine_devices(::Type{T}, ::Type{Nothing}) where {T <: AbstractDevice} = T
+combine_devices(::Type{T}, ::Type{UnknownDevice}) where {T <: AbstractDevice} = T
+combine_devices(::Type{Nothing}, ::Type{T}) where {T <: AbstractDevice} = T
+combine_devices(::Type{UnknownDevice}, ::Type{T}) where {T <: AbstractDevice} = T
+combine_devices(::Type{UnknownDevice}, ::Type{UnknownDevice}) = UnknownDevice
 function combine_devices(T1::Type{<:AbstractDevice}, T2::Type{<:AbstractDevice})
     throw(ArgumentError("Objects are on devices with different types: $(T1) and $(T2)."))
 end
@@ -147,12 +153,30 @@ for op in (:get_device, :get_device_type)
             length(x) == 0 && return $(op == :get_device ? nothing : Nothing)
             return unrolled_mapreduce(MLDataDevices.$(op), combine_devices, values(x))
         end
+
+        function $(op)(f::F) where {F <: Function}
+            Base.issingletontype(F) &&
+                return $(op == :get_device ? UnknownDevice() : UnknownDevice)
+            return unrolled_mapreduce(MLDataDevices.$(op), combine_devices,
+                map(Base.Fix1(getfield, f), fieldnames(F)))
+        end
     end
 
     for T in (Number, AbstractRNG, Val, Symbol, String, Nothing, AbstractRange)
         @eval $(op)(::$(T)) = $(op == :get_device ? nothing : Nothing)
     end
 end
+
+get_device(_) = UnknownDevice()
+get_device_type(_) = UnknownDevice
+
+fast_structure(::AbstractArray) = true
+fast_structure(::Union{Tuple, NamedTuple}) = true
+for T in (Number, AbstractRNG, Val, Symbol, String, Nothing, AbstractRange)
+    @eval fast_structure(::$(T)) = true
+end
+fast_structure(::Function) = true
+fast_structure(_) = false
 
 function unrolled_mapreduce(f::F, op::O, itr) where {F, O}
     return unrolled_mapreduce(f, op, itr, static_length(itr))
