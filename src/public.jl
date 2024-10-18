@@ -232,11 +232,6 @@ const GET_DEVICE_ADMONITIONS = """
 !!! note
 
     Trigger Packages must be loaded for this to return the correct device.
-
-!!! warning
-
-    RNG types currently don't participate in device determination. We will remove this
-    restriction in the future.
 """
 
 # Query Device from Array
