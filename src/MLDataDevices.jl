@@ -4,6 +4,7 @@ using Adapt: Adapt
 using Functors: Functors, fleaves
 using Preferences: @delete_preferences!, @load_preference, @set_preferences!
 using Random: AbstractRNG, Random
+using Compat: @compat
 
 abstract type AbstractDevice <: Function end
 abstract type AbstractCPUDevice <: AbstractDevice end
@@ -25,7 +26,6 @@ export get_device, get_device_type
 
 export DeviceIterator
 
-### uncomment below when min supported julia version is >=1.11
-# public isleaf 
+@compat(public, (isleaf,))
 
 end

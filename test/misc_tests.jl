@@ -157,3 +157,22 @@ end
     @test get_device(x) isa MLDataDevices.UnknownDevice
     @test get_device_type(x) <: MLDataDevices.UnknownDevice
 end
+
+@testset "isleaf" begin
+    # Functors.isleaf fallback
+    @test MLDataDevices.isleaf(rand(2))
+    @test !MLDataDevices.isleaf((rand(2),))
+    
+    struct Tleaf
+        x
+    end
+    Functors.@functor Tleaf
+
+    MLDataDevices.isleaf(::Tleaf) = true
+
+    Adapt.adapt_structure(dev::CPUDevice, t::Tleaf) = Tleaf(2 .* dev(t.x))
+
+    cpu = cpu_device()
+    t = Tleaf(ones(2))
+    @test cpu(t).x == 2 .* ones(2)
+end
