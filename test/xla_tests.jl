@@ -54,7 +54,11 @@ using FillArrays, Zygote  # Extensions
     @test ps_xpu.e == ps.e
     @test ps_xpu.d == ps.d
     @test ps_xpu.rng_default isa rngType
+    @test get_device(ps_xpu.rng_default) === nothing
+    @test get_device_type(ps_xpu.rng_default) <: Nothing
     @test ps_xpu.rng == ps.rng
+    @test get_device(ps_xpu.rng) === nothing
+    @test get_device_type(ps_xpu.rng) <: Nothing
 
     if MLDataDevices.functional(XLADevice)
         @test ps_xpu.one_elem isa Reactant.RArray
@@ -80,7 +84,11 @@ using FillArrays, Zygote  # Extensions
     @test ps_cpu.e == ps.e
     @test ps_cpu.d == ps.d
     @test ps_cpu.rng_default isa Random.TaskLocalRNG
+    @test get_device(ps_cpu.rng_default) === nothing
+    @test get_device_type(ps_cpu.rng_default) <: Nothing
     @test ps_cpu.rng == ps.rng
+    @test get_device(ps_cpu.rng) === nothing
+    @test get_device_type(ps_cpu.rng) <: Nothing
 
     if MLDataDevices.functional(XLADevice)
         @test ps_cpu.one_elem isa Array
