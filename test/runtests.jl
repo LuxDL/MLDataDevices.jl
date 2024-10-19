@@ -1,5 +1,6 @@
 import Pkg
 using SafeTestsets, Test
+using Functors: Functors
 
 const BACKEND_GROUP = lowercase(get(ENV, "BACKEND_GROUP", "none"))
 
