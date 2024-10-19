@@ -163,9 +163,9 @@ end
     # Functors.isleaf fallback
     @test MLDataDevices.isleaf(rand(2))
     @test !MLDataDevices.isleaf((rand(2),))
-    
+
     struct Tleaf
-        x
+        x::Any
     end
     Functors.@functor Tleaf
     MLDataDevices.isleaf(::Tleaf) = true
