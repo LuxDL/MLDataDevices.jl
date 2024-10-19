@@ -3,6 +3,7 @@ using ArrayInterface: parameterless_type
 using ChainRulesTestUtils: test_rrule
 using ReverseDiff, Tracker, ForwardDiff
 using SparseArrays, FillArrays, Zygote, RecursiveArrayTools
+using Functors: Functors
 
 @testset "Issues Patches" begin
     @testset "#10 patch" begin
@@ -172,7 +173,7 @@ end
 
     cpu = cpu_device()
     t = Tleaf(ones(2))
-    t = cpu(t)
+    y = cpu(t)
     @test y.x == 2 .* ones(2)
     y = cpu([(t,)])
     @test y[1][1].x == 2 .* ones(2)

@@ -1,6 +1,5 @@
 import Pkg
 using SafeTestsets, Test
-using Functors: Functors
 
 const BACKEND_GROUP = lowercase(get(ENV, "BACKEND_GROUP", "none"))
 
@@ -24,7 +23,8 @@ end
     all_files = ["cuda_tests.jl", "amdgpu_tests.jl",
         "metal_tests.jl", "oneapi_tests.jl", "xla_tests.jl"]
     file_names = BACKEND_GROUP == "all" ? all_files :
-                 (BACKEND_GROUP == "cpu" ? [] : [BACKEND_GROUP * "_tests.jl"])
+                 BACKEND_GROUP ∈ ("cpu", "none") ? [] : 
+                 [BACKEND_GROUP * "_tests.jl"]
     @testset "$(file_name)" for file_name in file_names
         run(`$(Base.julia_cmd()) --color=yes --project=$(dirname(Pkg.project().path))
              --startup-file=no --code-coverage=user $(@__DIR__)/$file_name`)
