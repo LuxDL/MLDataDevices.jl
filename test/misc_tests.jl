@@ -185,7 +185,7 @@ end
         x = rand(1)
         m = (; a = x, b = x')
         count = Ref(0)
-        mcopy = fmap(m; exclude = MLDataDevices.isleaf) do x
+        mcopy = Functors.fmap(m; exclude = MLDataDevices.isleaf) do x
             count[] += 1
             return copy(x)
         end
