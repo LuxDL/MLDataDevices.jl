@@ -50,7 +50,7 @@ end
 
 @testset "CRC Tests" begin
     dev = cpu_device() # Other devices don't work with FiniteDifferences.jl
-    test_rrule(Adapt.adapt_storage, dev, randn(Float64, 10); check_inferred=true)
+    test_rrule(Adapt.adapt, dev, randn(Float64, 10); check_inferred=true)
 
     gdev = gpu_device()
     if !(gdev isa MetalDevice)  # On intel devices causes problems
@@ -205,4 +205,17 @@ end
             @test !MLDataDevices.isleaf(PermutedDimsArray([x;;], (1, 2)))
         end
     end
+end
+
+@testset "Zygote.gradient(wrapped arrays)" begin
+    using Zygote
+
+    x = rand(4, 4)
+    cdev = cpu_device()
+
+    @test only(Zygote.gradient(x -> sum(abs2, cdev(x)), x')) isa Matrix{Float64}
+
+    gdev = gpu_device()
+
+    @test only(Zygote.gradient(x -> sum(abs2, gdev(x)), x')) isa Matrix{Float64}
 end

@@ -342,29 +342,13 @@ for (dev) in (:CPU, :CUDA, :AMDGPU, :Metal, :oneAPI, :XLA)
     ldev = Symbol(dev, :Device)
     @eval begin
         function (D::$(ldev))(x::AbstractArray{T}) where {T}
-            if isleaf(x)
-                (isbitstype(T) || Internal.special_aos(x)) && return Adapt.adapt(D, x)
-                return map(D, x)
+            if isbitstype(T) || Internal.special_aos(x) || x isa Adapt.WrappedArray
+                return Adapt.adapt(D, x)
             end
-            return Functors.fmap(D, x; exclude=isleaf)
-        end
-        # Fast Paths else we don't get type stability
-        function (D::$(ldev))(x::Transpose{T, <:AbstractArray{T}}) where {T}
-            return transpose(D(parent(x)))
-        end
-        function (D::$(ldev))(x::Adjoint{T, <:AbstractArray{T}}) where {T}
-            return adjoint(D(parent(x)))
-        end
-        function (D::$(ldev))(x::PermutedDimsArray{
-                T, N, perm, iperm, <:AbstractArray{T}}) where {T, N, perm, iperm}
-            y = D(parent(x))
-            return PermutedDimsArray{eltype(y), N, perm, iperm, typeof(y)}(y)
+            return map(D, x)
         end
 
-        function (D::$(ldev))(x::Union{Tuple, NamedTuple})
-            isleaf(x) && map(D, x)
-            return Functors.fmap(D, x; exclude=isleaf)
-        end
+        (D::$(ldev))(x::Union{Tuple, NamedTuple}) = map(D, x)
         function (D::$(ldev))(x)
             isleaf(x) && return Adapt.adapt(D, x)
             return Functors.fmap(D, x; exclude=isleaf)
@@ -418,4 +402,4 @@ If `MLDataDevices.isleaf(x::T)` is not defined, then it will fall back to `Funct
 isleaf(x) = Functors.isleaf(x)
 
 isleaf(::AbstractArray{T}) where {T} = isbitstype(T)
-isleaf(::Union{Transpose, Adjoint, PermutedDimsArray}) = false
+isleaf(::Adapt.WrappedArray) = false
