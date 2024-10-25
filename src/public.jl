@@ -347,7 +347,6 @@ for (dev) in (:CPU, :CUDA, :AMDGPU, :Metal, :oneAPI, :XLA)
             end
             return map(D, x)
         end
-
         (D::$(ldev))(x::Union{Tuple, NamedTuple}) = map(D, x)
         function (D::$(ldev))(x)
             isleaf(x) && return Adapt.adapt(D, x)
@@ -374,14 +373,6 @@ for T in (AMDGPUDevice, CUDADevice, MetalDevice, oneAPIDevice, XLADevice)
         end
         Adapt.adapt_storage(::$(T), rng::AbstractRNG) = rng
     end
-end
-
-Adapt.adapt_storage(::CPUDevice, x::AbstractRange) = x
-Adapt.adapt_storage(::XLADevice, x::AbstractRange) = x
-# Prevent Ambiguity
-for T in (AMDGPUDevice, AMDGPUDevice{Nothing}, CUDADevice,
-    CUDADevice{Nothing}, MetalDevice, oneAPIDevice)
-    @eval Adapt.adapt_storage(to::$(T), x::AbstractRange) = Adapt.adapt(to, collect(x))
 end
 
 """

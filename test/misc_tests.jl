@@ -55,12 +55,12 @@ end
     gdev = gpu_device()
     if !(gdev isa MetalDevice)  # On intel devices causes problems
         x = randn(10)
-        ∂dev, ∂x = Zygote.gradient(sum ∘ Adapt.adapt_storage, gdev, x)
+        ∂dev, ∂x = Zygote.gradient(sum ∘ Adapt.adapt, gdev, x)
         @test ∂dev === nothing
         @test ∂x ≈ ones(10)
 
         x = randn(10) |> gdev
-        ∂dev, ∂x = Zygote.gradient(sum ∘ Adapt.adapt_storage, cpu_device(), x)
+        ∂dev, ∂x = Zygote.gradient(sum ∘ Adapt.adapt, cpu_device(), x)
         @test ∂dev === nothing
         @test ∂x ≈ gdev(ones(10))
         @test get_device(∂x) isa parameterless_type(typeof(gdev))

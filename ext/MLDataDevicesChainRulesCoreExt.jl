@@ -12,7 +12,8 @@ function ChainRulesCore.rrule(::typeof(Adapt.adapt), to::AbstractDevice, x::Abst
     dev = get_device(x)
     y = Adapt.adapt_storage(to, x)
     if dev === nothing || dev isa UnknownDevice
-        @warn "`get_device(::$(typeof(x)))` returned `$(dev)`." maxlog=1
+        dev isa UnknownDevice &&
+            @warn "`get_device(::$(typeof(x)))` returned `$(dev)`." maxlog=1
         ∇adapt_storage_unknown = Δ -> (NoTangent(), NoTangent(), Δ)
         return y, ∇adapt_storage_unknown
     else

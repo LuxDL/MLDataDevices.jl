@@ -46,7 +46,7 @@ MLDataDevicesoneAPIExt = ["GPUArrays", "oneAPI"]
 
 [compat]
 AMDGPU = "0.9.6, 1"
-Adapt = "4"
+Adapt = "4.1"
 CUDA = "5.2"
 ChainRulesCore = "1.23"
 Compat = "4.15"
