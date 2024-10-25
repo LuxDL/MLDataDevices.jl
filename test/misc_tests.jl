@@ -181,7 +181,6 @@ end
     end
 
     @testset "shared parameters" begin
-        # from  
         x = rand(1)
         m = (; a=x, b=x')
         count = Ref(0)
@@ -199,7 +198,7 @@ end
             y::Float64
         end
 
-        for x in [1.0, 'a', BitsType(1, 2.0)]
+        @testset for x in [1.0, 'a', BitsType(1, 2.0)]
             @test MLDataDevices.isleaf([x])
             @test !MLDataDevices.isleaf([x]')
             @test !MLDataDevices.isleaf(transpose([x]))
