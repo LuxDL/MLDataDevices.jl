@@ -12,6 +12,9 @@
 [![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
 [![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
 
+> [!WARNING]
+> Package has been moved to a subdirectory in Lux https://github.com/LuxDL/Lux.jl/tree/main/lib/
+
 `MLDataDevices.jl` is a lightweight package defining rules for transferring data across
 devices. It is used in deep learning frameworks such as [Lux.jl](https://lux.csail.mit.edu/) and [Flux.jl](https://fluxml.ai/).
 
